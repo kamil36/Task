@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_books/apicalled.dart';
-import 'package:task_books/common/widgets/booklistitem.dart';
-import 'package:task_books/homepage.dart';
+import 'package:task_books/pages/homepage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,7 +21,7 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: MyWidget(),
+      home: HomePage(),
     );
   }
 }
