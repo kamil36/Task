@@ -1,76 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:task_books/models/books.dart';
+import 'package:task_books/common/styles/colors.dart';
+import 'package:task_books/common/styles/textstyles.dart';
+import 'package:task_books/models/bookmodel.dart';
+import 'package:task_books/pages/bookitempage.dart';
 
 class SearchPage extends StatefulWidget {
-  const SearchPage({Key? key}) : super(key: key);
-
+  const SearchPage({Key? key, required this.works}) : super(key: key);
+  final List<Work?> works;
   @override
   _SearchPageState createState() => _SearchPageState();
 }
 
 class _SearchPageState extends State<SearchPage> {
-  List<BookListItem> books = [
-    BookListItem(
-      coverId: "assets/img/b1.jpg",
-      author: "Dhoni",
-      title: "CSK",
-      publishedYear: 2000,
-      read: false,
-    ),
-    BookListItem(
-      coverId: "assets/img/b2.jpg",
-      author: "Rohit",
-      title: "MI",
-      publishedYear: 2002,
-      read: false,
-    ),
-    BookListItem(
-      coverId: "assets/img/b3.jpg",
-      author: "Virat",
-      title: "RCB",
-      publishedYear: 2004,
-      read: false,
-    ),
-    BookListItem(
-      coverId: "assets/img/b4.jpg",
-      author: "Sanju",
-      title: "RR",
-      publishedYear: 2006,
-      read: false,
-    ),
-    BookListItem(
-      coverId: "assets/img/b5.jpg",
-      author: "Rahul",
-      title: "LSG",
-      publishedYear: 2008,
-      read: false,
-    ),
-    BookListItem(
-      coverId: "assets/img/b6.jpg",
-      author: "Moris",
-      title: "SRH",
-      publishedYear: 2010,
-      read: false,
-    ),
-  ];
-  // This list holds the data for the list view
-  List<BookListItem> _foundUsers = [];
+  List<Work?> _foundUsers = [];
   @override
   initState() {
-    _foundUsers = books;
+    _foundUsers = widget.works;
     super.initState();
   }
 
-  // This function is called whenever the text field changes
   void _runFilter(String enteredKeyword) {
-    List<BookListItem> results = [];
+    List<Work?> results = [];
     if (enteredKeyword.isEmpty) {
-      // if the search field is empty or only contains white-space, we'll display all users
-      results = books;
+      results = widget.works;
     } else {
-      results = books
-          .where((books) =>
-              books.title.toLowerCase().contains(enteredKeyword.toLowerCase()))
+      results = widget.works
+          .where((book) => (book?.title ?? "")
+              .toLowerCase()
+              .contains(enteredKeyword.toLowerCase()))
           .toList();
       // we use the toLowerCase() method to make it case-insensitive
     }
@@ -80,12 +37,18 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   bool isRead = false;
+  int? selectedIndex;
 
-  void toggleStatus() {
+  void toggleStatus(int index) {
     setState(() {
       isRead = !isRead;
+      selectedIndex = index;
     });
   }
+
+  String COVER_URL = 'https://covers.openlibrary.org/b/id/';
+
+  bool isclicked = false;
 
   @override
   Widget build(BuildContext context) {
@@ -114,91 +77,119 @@ class _SearchPageState extends State<SearchPage> {
                 child: _foundUsers.isNotEmpty
                     ? ListView.builder(
                         itemCount: _foundUsers.length,
-                        itemBuilder: (context, index) => Card(
-                          key: ValueKey(_foundUsers[index].title),
-                          elevation: 4,
-                          margin: const EdgeInsets.symmetric(vertical: 10),
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 20),
-                            child: Container(
-                              height: 550,
-                              child: Column(
-                                children: [
-                                  Image.asset(
-                                    _foundUsers[index].coverId,
-                                    fit: BoxFit.fill,
-                                    height: 350,
-                                    width: 350,
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    _foundUsers[index].title.toString(),
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 26,
-                                        color: Colors.white),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(_foundUsers[index].author,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 22,
-                                          color: Colors.white)),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                      '${_foundUsers[index].publishedYear.toString()} years old',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 22,
-                                          color: Colors.white)),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      fixedSize: Size(350, 50),
-                                      backgroundColor: isRead
-                                          ? Colors.greenAccent
-                                          : Colors.transparent,
-                                      foregroundColor: isRead
-                                          ? Colors.white
-                                          : Colors.transparent,
-                                      shadowColor: isRead
-                                          ? Colors.white
-                                          : Colors.transparent,
-                                      side: BorderSide(
-                                          color: isRead
-                                              ? Colors.greenAccent
-                                              : Colors
-                                                  .transparent), // Border color
+                        itemBuilder: (context, index) {
+                          final isSelected = selectedIndex == index;
+                          final isread = isRead;
+                          return Card(
+                            key: ValueKey(_foundUsers[index]?.title),
+                            elevation: 4,
+                            margin: const EdgeInsets.symmetric(vertical: 10),
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 20),
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => BookItemPage(
+                                        book: _foundUsers[index] ?? Work(),
+                                      ),
                                     ),
-                                    onPressed: () {
-                                      toggleStatus();
-                                    },
-                                    child: Text(
-                                      isRead ? "Read" : "Unread",
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold),
+                                  );
+                                },
+                                child: Column(
+                                  children: [
+                                    Image.network(
+                                      '$COVER_URL${_foundUsers[index]?.coverId}-M.jpg',
+                                      fit: BoxFit.fill,
+                                      height: 350,
+                                      width: 350,
                                     ),
-                                  ),
-                                ],
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      (_foundUsers[index]?.title ?? "")
+                                          .toString(),
+                                      style: TextStyle(
+                                          fontWeight:
+                                              AppTextStyles.fw22.fontWeight,
+                                          fontSize: AppTextStyles.fw22.fontSize,
+                                          color: AppColors.primary),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                        (_foundUsers[index]?.authorNames ?? [])
+                                            .join(", "),
+                                        style: TextStyle(
+                                            fontWeight:
+                                                AppTextStyles.fw22.fontWeight,
+                                            fontSize:
+                                                AppTextStyles.fw22.fontSize,
+                                            color: AppColors.primary)),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                        '${_foundUsers[index]?.firstPublishYear.toString()} years old',
+                                        style: TextStyle(
+                                            fontWeight:
+                                                AppTextStyles.fw22.fontWeight,
+                                            fontSize:
+                                                AppTextStyles.fw22.fontSize,
+                                            color: AppColors.primary)),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        fixedSize: Size(350, 50),
+                                        backgroundColor: isSelected && isread
+                                            ? AppColors.tertiary
+                                            : Colors.transparent,
+                                        foregroundColor: isSelected && isread
+                                            ? AppColors.seconday
+                                            : Colors.transparent,
+                                        shadowColor: isSelected && isread
+                                            ? AppColors.seconday
+                                            : Colors.transparent,
+                                        side: BorderSide(
+                                            color: isSelected && isread
+                                                ? AppColors.tertiary
+                                                : Colors
+                                                    .transparent), // Border color
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          toggleStatus(index);
+                                        });
+                                      },
+                                      child: Text(
+                                        isSelected && isread
+                                            ? "Read"
+                                            : "Unread",
+                                        style: TextStyle(
+                                            color: AppColors.primary,
+                                            fontSize:
+                                                AppTextStyles.fw22.fontSize,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                          //
-                        ),
-                      )
-                    : const Text(
+                            //
+                          );
+                        })
+                    : Text(
                         'No results found',
-                        style: TextStyle(fontSize: 24),
+                        style: TextStyle(
+                          fontSize: AppTextStyles.fw25.fontSize,
+                          fontWeight: AppTextStyles.fw25.fontWeight,
+                        ),
                       ),
               ),
             ],

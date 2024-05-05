@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:task_books/models/books.dart';
+import 'package:task_books/common/styles/colors.dart';
+import 'package:task_books/common/styles/textstyles.dart';
+import 'package:task_books/models/bookmodel.dart';
 
 class BookItemPage extends StatefulWidget {
-  final BookListItem book;
+  final Work book;
 
   BookItemPage({required this.book});
 
@@ -11,14 +13,15 @@ class BookItemPage extends StatefulWidget {
 }
 
 class _BookItemPageState extends State<BookItemPage> {
-  bool isRead = false; // Track the read status of the book
+  bool isRead = false;
 
   void toggleStatus() {
     setState(() {
-      isRead = !isRead; // Toggle the read status
+      isRead = !isRead;
     });
   }
 
+  String COVER_URL = 'https://covers.openlibrary.org/b/id/';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,37 +31,39 @@ class _BookItemPageState extends State<BookItemPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image.asset(
-              widget.book.coverId,
+            Image.network(
+              '$COVER_URL${widget.book.coverId}-M.jpg',
               fit: BoxFit.fill,
               height: 500,
               width: 400,
             ),
             SizedBox(height: 10),
             Text(
-              widget.book.title,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 26,
-                color: Colors.black,
+              widget.book.title ?? "",
+              style: TextStyle(
+                fontWeight: AppTextStyles.fw22.fontWeight,
+                fontSize: AppTextStyles.fw22.fontSize,
+                color: AppColors.primary,
               ),
             ),
             SizedBox(height: 10),
             Text(
-              widget.book.author,
+              (widget.book.authorNames ?? []).isNotEmpty
+                  ? widget.book.authorNames?.first ?? ""
+                  : "",
               style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 22,
-                color: Colors.black,
+                fontWeight: AppTextStyles.fw22.fontWeight,
+                fontSize: AppTextStyles.fw22.fontSize,
+                color: AppColors.primary,
               ),
             ),
             SizedBox(height: 10),
             Text(
-              '${widget.book.publishedYear}',
+              '${widget.book.firstPublishYear}',
               style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 22,
-                color: Colors.black,
+                fontWeight: AppTextStyles.fw22.fontWeight,
+                fontSize: AppTextStyles.fw22.fontSize,
+                color: AppColors.primary,
               ),
             ),
             SizedBox(
@@ -68,19 +73,21 @@ class _BookItemPageState extends State<BookItemPage> {
                 style: ElevatedButton.styleFrom(
                   fixedSize: Size(350, 50),
                   backgroundColor:
-                      isRead ? Colors.greenAccent : Colors.transparent,
-                  foregroundColor: isRead ? Colors.white : Colors.transparent,
+                      isRead ? AppColors.tertiary : Colors.transparent,
+                  foregroundColor:
+                      isRead ? AppColors.seconday : Colors.transparent,
+                  shadowColor: isRead ? AppColors.seconday : Colors.transparent,
                   side: BorderSide(
-                    color: isRead ? Colors.greenAccent : Colors.transparent,
+                    color: isRead ? AppColors.tertiary : Colors.transparent,
                   ),
                 ),
                 onPressed: toggleStatus,
                 child: Text(
                   isRead ? 'Read' : 'Unread',
                   style: TextStyle(
-                    color: isRead ? Colors.black : Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
+                    color: isRead ? AppColors.primary : AppColors.seconday,
+                    fontSize: AppTextStyles.fw22.fontSize,
+                    fontWeight: AppTextStyles.fw22.fontWeight,
                   ),
                 )),
           ],
