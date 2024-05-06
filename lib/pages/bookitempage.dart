@@ -26,71 +26,74 @@ class _BookItemPageState extends State<BookItemPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Image.network(
-              '$COVER_URL${widget.book.coverId}-M.jpg',
-              fit: BoxFit.fill,
-              height: 500,
-              width: 400,
-            ),
-            SizedBox(height: 10),
-            Text(
-              widget.book.title ?? "",
-              style: TextStyle(
-                fontWeight: AppTextStyles.fw22.fontWeight,
-                fontSize: AppTextStyles.fw22.fontSize,
-                color: AppColors.primary,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Image.network(
+                '$COVER_URL${widget.book.coverId}-M.jpg',
+                fit: BoxFit.fill,
+                height: 500,
+                width: 400,
               ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              (widget.book.authorNames ?? []).isNotEmpty
-                  ? widget.book.authorNames?.first ?? ""
-                  : "",
-              style: TextStyle(
-                fontWeight: AppTextStyles.fw22.fontWeight,
-                fontSize: AppTextStyles.fw22.fontSize,
-                color: AppColors.primary,
-              ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              '${widget.book.firstPublishYear}',
-              style: TextStyle(
-                fontWeight: AppTextStyles.fw22.fontWeight,
-                fontSize: AppTextStyles.fw22.fontSize,
-                color: AppColors.primary,
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  fixedSize: Size(350, 50),
-                  backgroundColor:
-                      isRead ? AppColors.tertiary : Colors.transparent,
-                  foregroundColor:
-                      isRead ? AppColors.seconday : Colors.transparent,
-                  shadowColor: isRead ? AppColors.seconday : Colors.transparent,
-                  side: BorderSide(
-                    color: isRead ? AppColors.tertiary : Colors.transparent,
-                  ),
+              SizedBox(height: 10),
+              Text(
+                widget.book.title ?? "",
+                style: TextStyle(
+                  fontWeight: AppTextStyles.fw22.fontWeight,
+                  fontSize: AppTextStyles.fw22.fontSize,
+                  color: AppColors.primary,
                 ),
-                onPressed: toggleStatus,
-                child: Text(
-                  isRead ? 'Read' : 'Unread',
-                  style: TextStyle(
-                    color: isRead ? AppColors.primary : AppColors.seconday,
-                    fontSize: AppTextStyles.fw22.fontSize,
-                    fontWeight: AppTextStyles.fw22.fontWeight,
+              ),
+              SizedBox(height: 10),
+              Text(
+                (widget.book.authorNames ?? []).isNotEmpty
+                    ? widget.book.authorNames?.first ?? ""
+                    : "",
+                style: TextStyle(
+                  fontWeight: AppTextStyles.fw22.fontWeight,
+                  fontSize: AppTextStyles.fw22.fontSize,
+                  color: AppColors.primary,
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                '${widget.book.firstPublishYear}',
+                style: TextStyle(
+                  fontWeight: AppTextStyles.fw22.fontWeight,
+                  fontSize: AppTextStyles.fw22.fontSize,
+                  color: AppColors.primary,
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    fixedSize: Size(350, 50),
+                    backgroundColor:
+                        isRead ? AppColors.tertiary : Colors.transparent,
+                    foregroundColor:
+                        isRead ? AppColors.seconday : Colors.transparent,
+                    shadowColor:
+                        isRead ? AppColors.seconday : Colors.transparent,
+                    side: BorderSide(
+                      color: isRead ? AppColors.tertiary : Colors.transparent,
+                    ),
                   ),
-                )),
-          ],
+                  onPressed: toggleStatus,
+                  child: Text(
+                    isRead ? 'Read' : 'Unread',
+                    style: TextStyle(
+                      color: isRead ? AppColors.primary : AppColors.seconday,
+                      fontSize: AppTextStyles.fw22.fontSize,
+                      fontWeight: AppTextStyles.fw22.fontWeight,
+                    ),
+                  )),
+            ],
+          ),
         ),
       ),
     );
